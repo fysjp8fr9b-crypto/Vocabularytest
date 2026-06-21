@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vokabeltest – Business in Context 3 · Topic 6</title>
+<style>
+  :root{
+    --bg:#0f172a; --card:#1e293b; --card2:#273449;
+    --accent:#a78bfa; --accent2:#8b5cf6;
+    --good:#22c55e; --bad:#ef4444;
+    --text:#e2e8f0; --muted:#94a3b8; --border:#334155;
+  }
+  *{box-sizing:border-box}
+  body{margin:0; font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    background:linear-gradient(160deg,#0f172a,#1b1633); color:var(--text); min-height:100vh; padding:24px}
+  .wrap{max-width:760px; margin:0 auto}
+  header{text-align:center; margin-bottom:24px}
+  header h1{margin:0 0 6px; font-size:1.7rem}
+  header p{margin:0; color:var(--muted)}
+  .card{background:var(--card); border:1px solid var(--border); border-radius:16px;
+    padding:24px; box-shadow:0 10px 30px rgba(0,0,0,.3); margin-bottom:18px}
+  h2{margin:0 0 14px; font-size:1.2rem}
+  input.text-ans{width:100%; padding:13px 16px; border-radius:10px; border:1px solid var(--border);
+    background:var(--card2); color:var(--text); font-size:1rem}
+  input.text-ans:focus{outline:none; border-color:var(--accent)}
+  button{background:var(--accent2); color:#fff; border:none; border-radius:10px;
+    padding:12px 22px; font-size:1rem; font-weight:600; cursor:pointer; transition:.15s}
+  button:hover{background:var(--accent)}
+  button.ghost{background:transparent; color:var(--accent); border:1px solid var(--accent)}
+  button.ghost:hover{background:rgba(167,139,250,.12)}
+  button:disabled{opacity:.45; cursor:not-allowed}
+  .row{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+  .meta{display:flex; justify-content:space-between; color:var(--muted); font-size:.9rem; margin-bottom:10px}
+  .progress{height:8px; background:var(--card2); border-radius:99px; overflow:hidden; margin-bottom:18px}
+  .progress>div{height:100%; background:linear-gradient(90deg,var(--accent2),var(--accent)); width:0; transition:width .3s}
+  .tag{display:inline-block; font-size:.72rem; letter-spacing:.04em; text-transform:uppercase;
+    color:var(--accent); background:rgba(167,139,250,.14); padding:3px 9px; border-radius:99px; margin-bottom:12px}
+  .qtext{font-size:1.3rem; line-height:1.5; margin-bottom:4px; font-weight:600}
+  .qsub{color:var(--muted); margin-bottom:8px; font-size:.92rem}
+  .cloze{font-size:1.1rem; line-height:1.6; background:var(--card2); padding:14px 16px; border-radius:10px; margin-bottom:6px}
+  .cloze u{color:var(--accent); text-decoration:none; letter-spacing:2px}
+  .answers{display:flex; flex-direction:column; gap:10px; margin:16px 0}
+  .answer{text-align:left; background:var(--card2); border:1px solid var(--border); color:var(--text);
+    padding:13px 16px; border-radius:10px; font-size:1rem; cursor:pointer; transition:.12s; font-weight:400}
+  .answer:hover:not(:disabled){border-color:var(--accent)}
+  .answer.correct{border-color:var(--good); background:rgba(34,197,94,.15)}
+  .answer.wrong{border-color:var(--bad); background:rgba(239,68,68,.15)}
+  .feedback{margin-top:14px; padding:13px 16px; border-radius:10px; font-size:.95rem; line-height:1.5; display:none}
+  .feedback.show{display:block}
+  .feedback.ok{background:rgba(34,197,94,.12); border:1px solid var(--good)}
+  .feedback.no{background:rgba(239,68,68,.12); border:1px solid var(--bad)}
+  .feedback b{color:var(--accent)}
+  .nav{display:flex; justify-content:space-between; margin-top:18px}
+  .score-big{font-size:3rem; font-weight:700; text-align:center; margin:10px 0}
+  .score-sub{text-align:center; color:var(--muted); margin-bottom:18px}
+  .center{text-align:center}
+  .hidden{display:none}
+  .pill{font-size:.8rem; color:var(--muted)}
+  small.hint{color:var(--muted); display:block; margin-top:8px}
+  .wrongList{margin:16px 0}
+  .wrongList div{padding:9px 0; border-bottom:1px solid var(--border); font-size:.95rem}
+  .wrongList .w-q{color:var(--text)} .wrongList .w-a{color:var(--good)} .wrongList .w-u{color:var(--bad)}
+  table.tbl{width:100%; border-collapse:collapse; margin:14px 0; font-size:.9rem}
+  table.tbl th,table.tbl td{padding:8px 10px; border-bottom:1px solid var(--border); text-align:left}
+  table.tbl th{color:var(--muted); cursor:pointer; user-select:none; white-space:nowrap}
+  table.tbl td.num{text-align:right; font-variant-numeric:tabular-nums}
+  .teacher-link{display:block; text-align:center; margin-top:8px}
+  .teacher-link a{color:var(--muted); font-size:.82rem; cursor:pointer; text-decoration:underline}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>📚 Vokabeltest</h1>
+    <p>Business in Context 3 · Topic 6 – Transport and the environment</p>
+  </header>
+
+  <!-- START -->
+  <div id="start" class="card">
+    <h2>Dein Name</h2>
+    <input type="text" id="playerName" class="text-ans" maxlength="28"
+           placeholder="Vor- und Nachname eingeben …" autocomplete="off" style="margin-bottom:18px">
+    <p class="pill" id="startInfo"></p>
+    <div class="row" style="margin-top:8px">
+      <button id="startBtn">Test starten</button>
+    </div>
+    <div class="teacher-link"><a id="teacherLink">🔒 Lehrer-Ansicht</a></div>
+  </div>
+
+  <!-- QUIZ -->
+  <div id="quiz" class="card hidden">
+    <div class="meta"><span id="qCounter"></span><span id="qName"></span></div>
+    <div class="progress"><div id="bar"></div></div>
+    <span class="tag" id="qTag"></span>
+    <div id="qBody"></div>
+    <div id="answerArea"></div>
+    <div class="feedback" id="feedback"></div>
+    <div class="nav">
+      <button class="ghost" id="quitBtn">Abbrechen</button>
+      <button id="nextBtn" disabled>Weiter</button>
+    </div>
+  </div>
+
+  <!-- RESULT -->
+  <div id="result" class="card hidden">
+    <h2 class="center">Fertig! 🎉</h2>
+    <div class="score-big" id="scoreBig"></div>
+    <div class="score-sub" id="scoreSub"></div>
+    <div id="saveStatus" class="center pill" style="margin-bottom:10px"></div>
+    <div id="wrongWrap"></div>
+    <div class="center">
+      <button id="retryBtn">Nochmal</button>
+      <button class="ghost" id="homeBtn">Startseite</button>
+    </div>
+  </div>
+
+  <!-- TEACHER -->
+  <div id="teacher" class="card hidden">
+    <h2>🔒 Lehrer-Ansicht</h2>
+    <div id="teacherLogin">
+      <p class="pill">Passwort eingeben, um alle Ergebnisse zu sehen.</p>
+      <input type="password" id="teacherPw" class="text-ans" placeholder="Passwort" style="margin-bottom:12px">
+      <div class="row">
+        <button id="teacherEnter">Anzeigen</button>
+        <button class="ghost" id="teacherBack">Zurück</button>
+      </div>
+      <p id="pwErr" class="pill" style="color:var(--bad)"></p>
+    </div>
+    <div id="teacherData" class="hidden">
+      <div class="row" style="justify-content:space-between; margin-bottom:6px">
+        <span class="pill" id="resCount"></span>
+        <span class="row">
+          <button class="ghost" id="refreshBtn">↻ Aktualisieren</button>
+          <button id="csvBtn">⬇ CSV/Excel</button>
+        </span>
+      </div>
+      <div style="overflow-x:auto"><table class="tbl" id="resTable"><thead></thead><tbody></tbody></table></div>
+      <div class="center"><button class="ghost" id="teacherBack2">Zurück zur Startseite</button></div>
+    </div>
+  </div>
+
+  <p class="center pill">Lernhilfe – Wortschatz aus dem Schulbuch. Jede:r erhält 24 zufällig gemischte Vokabeln.</p>
+</div>
+
+<script>
+/* ============================================================
+   ====== KONFIGURATION ======
+   1) RANGLISTE / ERGEBNISSE (Supabase) – siehe README:
+   ============================================================ */
+const SUPABASE_URL = "https://rysixxhejhhlziprahaq.supabase.co";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ5c2l4eGhlamhobHppcHJhaGFxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIwNjMxODQsImV4cCI6MjA5NzYzOTE4NH0.fkn50SPuc1R9LUEytIrOHWqV04agVvrj1_WVxmJJtEc";
+/* 2) Passwort für die Lehrer-Ansicht */
+const TEACHER_PASSWORD = "lehrer_2026";
+/* 3) Anzahl Vokabeln pro Test */
+const NUM_QUESTIONS = 24;
+/* ============================================================ */
+
+const ONLINE = SUPABASE_URL.startsWith("http") && SUPABASE_KEY.length > 20;
+const TABLE = "vocab_results";
+
+/* ====== VOKABELN ====== */
+const VOCAB = [{"en": "basic need", "de": "Grundbedürfnis", "ex": "Many people are happy if they can pay for their basic needs."}, {"en": "population density", "de": "Bevölkerungsdichte", "ex": "Australia does not have a high population density."}, {"en": "extinction", "de": "Vernichtung, Ausrottung, Aussterben", "ex": "Sadly, panda bears are in danger of extinction. Without our help, they will die out."}, {"en": "species, pl species", "de": "Art, Spezies", "ex": "Too many species are in danger of extinction."}, {"en": "hunting", "de": "Jagd, Bejagung", "ex": "I’m against fox hunting. I think it’s cruel."}, {"en": "competition (for)", "de": "Konkurrenz(kampf) (um), Wettbewerb", "ex": "So many students wish to study here – there is a lot of competition for a scholarship."}, {"en": "impact", "de": "Auswirkung", "ex": "Our latest marketing campaign had a huge impact on sales – they increased dramatically."}, {"en": "deforestation", "de": "Abholzung, Entwaldung, Waldzerstörung", "ex": "Deforestation has caused so many environmental problems."}, {"en": "to face disaster", "de": "vor einer Katastrophe stehen", "ex": "The Fridays for Future movement believes we face disaster unless we act now."}, {"en": "resources pl", "de": "Ressourcen, Rohstoffe", "ex": "Natural resources are running out in some parts of the world."}, {"en": "Industrial Revolution", "de": "Industrielle Revolution", "ex": "The Industrial Revolution brought about so many changes."}, {"en": "mass manufacturing", "de": "Massenfertigung", "ex": "Mass manufacturing resulted n cheaper products, but the loss of many skills."}, {"en": "population growth", "de": "Bevölkerungswachstum", "ex": "Population growth has led to more poverty in the world."}, {"en": "commodity", "de": "Handelsware, Rohstoff", "ex": "Water is a commodity so many of us take for granted."}, {"en": "globalization", "de": "Globalisierung", "ex": "Globalization has many drawbacks."}, {"en": "environmentally aware", "de": "umweltbewusst", "ex": "Nowadays, thanks to activists like Greta Thunberg, more people are environmentally aware."}, {"en": "to litter AE", "de": "Abfälle zurücklassen", "ex": "Unfortunately, some tourists litter the areas they visit."}, {"en": "valuable", "de": "wertvoll", "ex": "Don’t waste valuable time making everything perfect! It just has to be good enough."}, {"en": "to refuse", "de": "sich weigern, ablehnen", "ex": "She refused to help me. She said she had no time."}, {"en": "to reuse", "de": "wiederbenutzen, wiederverwenden", "ex": "It is important to reuse as much as possible and not just throw things away."}, {"en": "to repurpose", "de": "einem neuen Zweck zuführen, zu einem neuen/anderen Zweck nutzen", "ex": "To use an old old car tyre as the seat for a swing is an example of repurposing."}, {"en": "to recycle", "de": "recyceln, wiederverwerten", "ex": "It is easy to recycle paper and cardboard so the material can be reused."}, {"en": "locally grown", "de": "aus regionalem Anbau", "ex": "Whenever possible, my family buys locally grown fruit and vegetables."}, {"en": "eco-friendly", "de": "umweltfreundlich", "ex": "Solar power is a lot more eco-friendly than burning fossil fuels."}, {"en": "consumerism", "de": "Konsumdenken", "ex": "Many people strongly dislike the role of consumerism at Christmas."}, {"en": "recreational shopping", "de": "Shopping/Einkaufen als Freizeitbeschäftigung", "ex": "Recreational shopping has gained in popularity in recent years."}, {"en": "pastime", "de": "Zeitvertreib, Hobby", "ex": "Gardening has always been my grandmother’s favourite pastime."}, {"en": "material comfort", "de": "materielle Bequemlichkeit, materieller Wohlstand", "ex": "For so many of us, material comfort is an important part of life."}, {"en": "leisure travel", "de": "Privatreisen, Privatreiseverkehr", "ex": "Many people missed leisure travel during the Corona pandemic."}, {"en": "human-induced", "de": "menschengemacht, vom Menschen verursacht", "ex": "This disaster was human-induced."}, {"en": "climate change", "de": "Klimawandel", "ex": "Global warming is causing climate change. The Earth’s atmosphere is changing."}, {"en": "carbon dioxide (CO2)", "de": "Kohlendioxid", "ex": "Burning fossil fuels produces carbon dioxide emissions."}, {"en": "methane", "de": "Methan", "ex": "Methane is made up of one carbon atom and four hydrogen atoms."}, {"en": "emission", "de": "Emission, Ausstoß", "ex": "How can we reduce our carbon emissions?"}, {"en": "fossil fuel", "de": "fossiler Brennstoff", "ex": "Harmful gases are produced when we burn fossil fuels."}, {"en": "livestock farming", "de": "Viehhaltung, Viehzucht", "ex": "This farm focuses on livestock farming – they grow no crops at all."}, {"en": "global warming", "de": "globale Erwärmung", "ex": "Today, global warming causes many environmental problems."}, {"en": "greenhouse gas emission", "de": "Treibhausgasausstoß", "ex": "Burning fossil fuels increase greenhouse gas emissions."}, {"en": "to separate", "de": "trennen", "ex": "It is important to separate your waste and not put everything into one bin."}, {"en": "to feed (fed, fed)", "de": "ernähren, füttern", "ex": "Mary has to work because she has six children to feed."}, {"en": "chronic pain condition", "de": "chronischer Schmerzzustand", "ex": "He has a chronic pain condition, so he has to take strong painkillers."}, {"en": "care", "de": "Pflege, Fürsorge", "ex": "Being responsible for the care of the elderly is very rewarding work."}, {"en": "occasion", "de": "Gelegenheit, Anlass", "ex": "I wore my best dress for the occasion."}, {"en": "practice", "de": "Praxis, Praktik, Vorgehensweise, Methode", "ex": "I agree with you in theory, but in practice it is not easy to change our behaviour."}, {"en": "label", "de": "Etikett, Schild(chen)", "ex": "There isn’t a price label on the bread. I can’t see how much it costs."}, {"en": "by law", "de": "gesetzlich", "ex": "This is banned by law."}, {"en": "on a large scale", "de": "in großem Maßstab", "ex": "In recent years, migration to Europe has taken place on a large scale."}, {"en": "large-scale", "de": "umfangreich, Massen-", "ex": "Large-scale measures have to be implemented if we are to solve the challenges of climate change."}, {"en": "remotely", "de": "aus der Ferne", "ex": "Nowadays, many services are provided remotely via the internet."}, {"en": "transaction", "de": "Geschäft, Transaktion", "ex": "I’m sorry, the transaction failed. Would you like to try a different credit card?"}, {"en": "web", "de": "Netz, Netzwerk, Geflecht", "ex": "The abbreviation ‘www’ stands for World Wide Web."}, {"en": "raw material", "de": "Rohstoff, Rohmaterial", "ex": "The company buys a large amount of raw material, which it then processes to form a product."}, {"en": "mine", "de": "Bergwerk, Grube", "ex": "In the past, there were many coal mines in this area."}, {"en": "processing plant", "de": "Verarbeitungsanlage", "ex": "All the produce from our farm is sent to the local processing plant where it is made into tinned fruit and vegetables."}, {"en": "component", "de": "Bestandteil, Komponente", "ex": "When I took the machine apart, I found that one of its components was broken."}, {"en": "finished goods", "de": "Endprodukte", "ex": "Finished goods from factories are stored in large warehouses."}, {"en": "wholesale warehouse", "de": "Großhandelslager(haus)", "ex": "A wholesale warehouse delivers the goods to retailers."}, {"en": "retail space", "de": "Verkaufsfläche", "ex": "Amy is looking for a new shop with more retail space."}, {"en": "distribution centre", "de": "Verteilzentrum, Auslieferungslager", "ex": "A distribution centre also distributes goods to retailers."}, {"en": "one size fits all", "de": "Einheitsgröße", "ex": "The term ‘one size fits all’ is used to describe containers which are all the same size."}, {"en": "to standardize", "de": "standardisieren, normen", "ex": "If we standardize the design, it will save costs."}, {"en": "to stack", "de": "stapeln", "ex": "The employees stacked the new products by the entrance."}, {"en": "docks", "de": "Hafenanlage, Docks", "ex": "If you go to Hamburg, then a trip to the docks is a must – there are so many interesting ships there."}, {"en": "crane", "de": "Kran", "ex": "The containers are unloaded using a crane."}, {"en": "container ship", "de": "Containerschiff", "ex": "A huge container ship got stuck in the Suez Canal in 2021."}, {"en": "high-value items", "de": "hochwertige Güter", "ex": "This store only sells high-value items."}, {"en": "to spoil", "de": "verderben", "ex": "Dairy products spoil quickly if it is too hot."}, {"en": "passenger airliner", "de": "Passagierflugzeug", "ex": "Passenger airliners are also used to transport goods."}, {"en": "pallet", "de": "Palette", "ex": "Small items can be packed into pallets for easy transport."}, {"en": "shrink-wrap plastic", "de": "Schrumpffolie", "ex": "Shrink-warp plastic is used to pack many small items."}, {"en": "forklift truck", "de": "Gabelstapler", "ex": "A forklift truck is used to lift and move heavy objects.", "alt": ["forklift"]}, {"en": "congested", "de": "verstopft", "ex": "In the rush hour, many roads in the city centre are congested."}, {"en": "sprawling", "de": "weitläufig, ausgedehnt", "ex": "The sprawling city is home to people from so many different countries."}, {"en": "freight terminal", "de": "Frachtterminal", "ex": "Large airports have freight as well as passenger terminals."}, {"en": "shipping lane", "de": "Schifffahrtsweg", "ex": "A shipping lane is a regularly used route for commercial ships."}, {"en": "flight path", "de": "Flugroute", "ex": "The new flight path goes directly over my cousin’s new flat. It will be very noisy there."}, {"en": "quality of life", "de": "Lebensqualität", "ex": "For some people, quality of life is more important than luxury."}, {"en": "destruction", "de": "Zerstörung, Vernichtung", "ex": "The destruction of the Amazon rainforest will cause the loss of many habitats."}, {"en": "natural habitat", "de": "natürlicher Lebensraum", "ex": "Many insects’ natural habitats have been destroyed."}, {"en": "irreversible damage", "de": "irreversibler Schaden", "ex": "Irreversible damage cannot be repaired."}, {"en": "port", "de": "Hafen", "ex": "During the storm, the ships had to stay anchored at the port."}, {"en": "sample", "de": "Stichprobe, Auswahl, Querschnitt", "ex": "We asked a random sample of students what their future plans were."}, {"en": "tap", "de": "Wasserhahn", "ex": "The hot water tap drips – it is so annoying."}, {"en": "tasty", "de": "schmackhaft, lecker", "ex": "This bread is really tasty. Can I have some more, please?"}, {"en": "to bury", "de": "vergraben", "ex": "The dog buried its bone in the garden."}, {"en": "appearance", "de": "Aussehen, Erscheinungsbild", "ex": "Appearance is very important to me. I never leave the house without make- up."}, {"en": "to have pleasure in doing", "de": "das Vergnügen haben etw. zu tun; sich freuen etw. zu tun", "ex": "I have great pleasure in announcing the birth of our son."}, {"en": "to have/make an early start", "de": "früh aufbrechen, frühzeitig beginnen", "ex": "It’s a long drive, so we need to make an early start."}, {"en": "duration", "de": "Dauer", "ex": "It was amazing – the little boy sat still for the duration of the entire concert."}, {"en": "to make reference to sth.", "de": "auf etw. Bezug nehmen", "ex": "Paul made a direct reference to the recent cyberbullying incident in his presentation about social media."}, {"en": "provisional", "de": "vorläufig", "ex": "We’ve rented provisional premises until our new offices are ready."}, {"en": "pending", "de": "vorbehaltlich, bis zu(r)", "ex": "The conference rooms have been reserved, pending payment of the attached invoice."}, {"en": "to attach", "de": "anhängen (E-Mail), anfügen (Brief)", "ex": "Please find attached my report and an overview of our upcoming projects."}, {"en": "query", "de": "Anfrage, Frage, Rückfrage", "ex": "After the fair, we received several queries from potential customers."}, {"en": "regarding", "de": "bezüglich, betreffend", "ex": "Regarding your recent email, I am happy to confirm delivery next week."}, {"en": "operative", "de": "MitarbeiterIn", "ex": "Jill works as a reservations operative in a large hotel in Canada."}, {"en": "to be pleased to do sth.", "de": "etw. gern tun", "ex": "I’m always pleased to help students."}, {"en": "cancellation", "de": "Stornierung", "ex": "I generally like working in a hotel, but today it was frustrating. Due to the bad weather, we had four cancellations."}, {"en": "prior to", "de": "vor", "ex": "Prior to my internship, I studied in Vienna for four years."}, {"en": "peak season", "de": "Hauptsaison, Hochbetrieb", "ex": "For hotels on the Baltic coast, the peak season is the summer months, of course."}, {"en": "(business) function", "de": "geschäftliche Veranstaltung, (geschäftliche) Feierlichkeit", "ex": "This room is ideal for large business functions."}, {"en": "to charge", "de": "(Preis) verlangen, berechnen, in Rechnung stellen", "ex": "delivery?"}, {"en": "Please accept our sincere apologies", "de": "Wir entschuldigen uns aufrichtig (dafür, dass …)", "ex": "Please accept our apologies for any inconvenience."}, {"en": "assistance", "de": "Hilfe, Unterstützung", "ex": "Can I be of assistance?"}, {"en": "to amend", "de": "(ab)ändern", "ex": "We may have to amend the report when we receive the final results. I’ll let you know if there are any changes."}];
+
+/* ====== HILFSFUNKTIONEN ====== */
+const el = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function shuffle(a){a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function escRe(s){return s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');}
+
+// Normalisierung für Antwortvergleich (Umlaute -> ae/oe/ue, Kleinschreibung)
+function norm(s){
+  return s.toLowerCase().replace(/[’`´]/g,"'").trim()
+    .replace(/[.,;!?]+$/,"")
+    .replace(/ä/g,"ae").replace(/ö/g,"oe").replace(/ü/g,"ue").replace(/ß/g,"ss")
+    .replace(/\s+/g," ").trim();
+}
+// erzeugt akzeptierte Antworten aus einem Roh-String (mehrere Synonyme, Klammern optional)
+function acceptSet(raw, lang){
+  const out=new Set();
+  const alts = raw.split(/[;,]|\s\/\s|\//).map(s=>s.trim()).filter(Boolean);
+  alts.push(raw);
+  alts.forEach(a=>{
+    const withC = a.replace(/[()]/g,"");          // Klammerinhalt behalten
+    const without = a.replace(/\([^)]*\)/g,"");    // Klammerinhalt weg
+    [withC,without].forEach(v=>{
+      // Marker entfernen (AE, BE, pl, sth., sb.)
+      v = v.replace(/\b(AE|BE|pl)\b/g,"").replace(/\bsth\.?\b/g,"").replace(/\bsb\.?\b/g,"");
+      let n = norm(v);
+      if(n) out.add(n);
+      if(lang==="en" && n.startsWith("to ")) out.add(n.slice(3));
+    });
+  });
+  out.delete("");
+  return out;
+}
+function checkText(input, acceptSetObj){
+  const v = norm(input);
+  if(!v) return false;
+  if(acceptSetObj.has(v)) return true;
+  if(acceptSetObj.has("to "+v)) return true;          // "to xyz" tolerieren
+  const vs = v.replace(/\s+/g,"");                      // leerzeichen-unabhängig vergleichen
+  for(const a of acceptSetObj){ if(a.replace(/\s+/g,"")===vs) return true; }
+  return false;
+}
+// akzeptierte englische Antworten inkl. Alternativen aus item.alt (z. B. forklift / forklift truck)
+function enAccept(item){
+  const s = acceptSet(item.en,"en");
+  (item.alt||[]).forEach(a=> acceptSet(a,"en").forEach(x=>s.add(x)) );
+  return s;
+}
+
+/* ====== TEST AUFBAUEN ====== */
+let questions=[], idx=0, score=0, wrong=[], answered=false, playerName="";
+
+el('startInfo').textContent = `${NUM_QUESTIONS} Vokabeln · gemischt aus ${VOCAB.length} · Multiple Choice, Tippen, Lückentext & Schreiben`;
+
+// findet das Stichwort im Beispielsatz (für Lückentext)
+function buildCloze(item){
+  if(!item.ex || item.ex.length<8) return null;
+  let cand = item.en.replace(/\b(AE|BE|pl)\b/g,"").replace(/\([^)]*\)/g,"").replace(/,.*$/,"").trim();
+  cand = cand.replace(/^to\s+/i,"");
+  const tryFind = (term)=>{
+    const re = new RegExp("\\b"+escRe(term)+"(s|es|ing|ed)?\\b","i");
+    const m = item.ex.match(re);
+    return m ? {index:m.index, text:m[0]} : null;
+  };
+  let hit = tryFind(cand);
+  if(!hit){
+    const words = cand.split(/\s+/).filter(w=>w.length>3);
+    for(let i=words.length-1;i>=0 && !hit;i--) hit = tryFind(words[i]);
+  }
+  if(!hit) return null;
+  const sentence = item.ex.slice(0,hit.index) + "§§§" + item.ex.slice(hit.index+hit.text.length);
+  const acc = acceptSet(cand,"en"); acc.add(norm(hit.text));
+  return {sentence, accept:acc, solution:hit.text};
+}
+
+function makeQuestions(){
+  const pick = shuffle(VOCAB).slice(0, Math.min(NUM_QUESTIONS, VOCAB.length));
+  const types = ["mc","type","cloze","spell"];
+  return pick.map(item=>{
+    let type = types[Math.floor(Math.random()*types.length)];
+    if(type==="cloze" && !buildCloze(item)) type="type"; // Fallback wenn kein Lückentext möglich
+    // Es wird IMMER das englische Wort gesucht (Deutsch -> Englisch).
+    if(type==="mc"){
+      const ask = item.de.split(",")[0].trim();          // Deutsch zeigen
+      const correct = item.en;                             // Englisch ist die Lösung
+      const pool = VOCAB.filter(v=>v!==item);
+      const distract = shuffle(pool).slice(0,3).map(v=>v.en);
+      const options = shuffle([correct,...distract]);
+      return {type, item, ask, options, answer:options.indexOf(correct),
+              hintLabel:"Wähle das englische Wort:"};
+    }
+    if(type==="cloze"){
+      const c = buildCloze(item);
+      return {type, item, cloze:c, accept:c.accept, solution:c.solution};
+    }
+    if(type==="spell"){ // Deutsch zeigen, englisches Wort schreiben (mit Tipp)
+      const sol = item.en.replace(/\b(AE|BE|pl)\b/g,"").replace(/\([^)]*\)/g,"").replace(/^to\s+/i,"").split(",")[0].trim();
+      const hint = sol.replace(/[A-Za-z]/g,(ch,i)=> i===0?ch:"·");
+      return {type, item, ask:item.de, accept:enAccept(item), solution:item.en, hint};
+    }
+    // type: englische Übersetzung tippen
+    return {type:"type", item, ask:item.de, accept:enAccept(item), solution:item.en,
+            hintLabel:"Englische Übersetzung eingeben:"};
+  });
+}
+
+/* ====== START ====== */
+el('startBtn').onclick=()=>{
+  playerName = el('playerName').value.trim();
+  if(!playerName){ alert('Bitte zuerst deinen Namen eingeben.'); el('playerName').focus(); return; }
+  questions = makeQuestions();
+  idx=0; score=0; wrong=[];
+  el('start').classList.add('hidden'); el('result').classList.add('hidden');
+  el('teacher').classList.add('hidden');
+  el('quiz').classList.remove('hidden');
+  el('qName').textContent = playerName;
+  render();
+};
+
+/* ====== FRAGE ANZEIGEN ====== */
+function render(){
+  answered=false;
+  const q=questions[idx];
+  el('qCounter').textContent=`Frage ${idx+1} / ${questions.length}`;
+  el('bar').style.width=(idx/questions.length*100)+'%';
+  el('feedback').className='feedback'; el('feedback').innerHTML='';
+  el('nextBtn').disabled=true;
+  el('nextBtn').textContent=(idx===questions.length-1)?'Ergebnis':'Weiter';
+  const body=el('qBody'), area=el('answerArea');
+  body.innerHTML=''; area.innerHTML='';
+  const tags={mc:'Multiple Choice', type:'Übersetzen', cloze:'Lückentext', spell:'Wort schreiben'};
+  el('qTag').textContent=tags[q.type];
+
+  if(q.type==='mc'){
+    body.innerHTML=`<div class="qsub">${q.hintLabel}</div><div class="qtext">${esc(q.ask)}</div>`;
+    q.options.forEach((opt,i)=>{
+      const b=document.createElement('button');
+      b.className='answer'; b.textContent=opt;
+      b.onclick=()=>answerMC(i,b);
+      area.appendChild(b);
+    });
+  } else if(q.type==='cloze'){
+    const html=esc(q.cloze.sentence).replace("§§§","<u>_____</u>");
+    body.innerHTML=`<div class="qsub">Ergänze das fehlende englische Wort:</div><div class="cloze">${html}</div>`;
+    textInput(area,'Englisches Wort …');
+  } else if(q.type==='spell'){
+    body.innerHTML=`<div class="qsub">Schreibe das englische Wort:</div><div class="qtext">${esc(q.ask)}</div>`+
+                   `<small class="hint">Tipp: ${esc(q.hint)}</small>`;
+    textInput(area,'English word …');
+  } else {
+    body.innerHTML=`<div class="qsub">${q.hintLabel}</div><div class="qtext">${esc(q.ask)}</div>`;
+    textInput(area, 'English …');
+  }
+}
+function textInput(area, ph){
+  const inp=document.createElement('input');
+  inp.className='text-ans'; inp.type='text'; inp.placeholder=ph; inp.autocomplete='off';
+  inp.spellcheck=false;
+  inp.addEventListener('keydown',e=>{ if(e.key==='Enter'&&!answered) answerText(inp); });
+  area.appendChild(inp);
+  const b=document.createElement('button'); b.textContent='Prüfen'; b.style.marginTop='12px';
+  b.onclick=()=>{ if(!answered) answerText(inp); };
+  area.appendChild(b);
+  setTimeout(()=>inp.focus(),50);
+}
+
+function answerMC(i,btn){
+  if(answered)return; answered=true;
+  const q=questions[idx];
+  [...el('answerArea').querySelectorAll('.answer')].forEach(b=>b.disabled=true);
+  const ok=i===q.answer;
+  el('answerArea').querySelectorAll('.answer')[q.answer].classList.add('correct');
+  if(!ok) btn.classList.add('wrong');
+  finish(ok, q.options[q.answer], q.options[i]);
+}
+function answerText(inp){
+  if(answered)return; answered=true;
+  const q=questions[idx];
+  const ok=checkText(inp.value, q.accept);
+  inp.disabled=true; inp.style.borderColor= ok?'var(--good)':'var(--bad)';
+  finish(ok, q.solution, inp.value||'(leer)');
+}
+function finish(ok, solution, given){
+  const q=questions[idx];
+  if(ok) score++;
+  else wrong.push({q: questionLabel(q), sol:solution, given, en:q.item.en, de:q.item.de});
+  const f=el('feedback'); f.classList.add('show', ok?'ok':'no');
+  f.innerHTML = ok ? '✅ Richtig!'
+    : `❌ Leider falsch. Richtige Antwort: <b>${esc(solution)}</b>`+
+      (q.item.de&&q.item.en ? `<br><span class="pill">${esc(q.item.en)} = ${esc(q.item.de)}</span>` : '');
+  el('bar').style.width=((idx+1)/questions.length*100)+'%';
+  el('nextBtn').disabled=false;
+}
+function questionLabel(q){
+  if(q.type==='cloze') return 'Lückentext: '+q.item.en;
+  return q.ask || q.item.en;
+}
+
+el('nextBtn').onclick=()=>{ if(idx<questions.length-1){idx++;render();} else showResult(); };
+el('quitBtn').onclick=()=>{ if(confirm('Test abbrechen? Das Ergebnis wird nicht gespeichert.')) goHome(); };
+
+/* ====== ERGEBNIS ====== */
+async function showResult(){
+  el('quiz').classList.add('hidden');
+  el('result').classList.remove('hidden');
+  const total=questions.length, pct=Math.round(score/total*100);
+  el('scoreBig').textContent=`${score} / ${total}`;
+  let msg = pct>=90?'🏆 Ausgezeichnet!':pct>=75?'👍 Sehr gut!':pct>=50?'🙂 Solide – weiter üben!':'📚 Dranbleiben!';
+  el('scoreSub').textContent=`${pct} % richtig · ${msg}`;
+  const ww=el('wrongWrap'); ww.innerHTML='';
+  if(wrong.length){
+    let h='<h2 style="margin-top:18px;font-size:1.05rem">Diese Vokabeln nochmal anschauen:</h2><div class="wrongList">';
+    wrong.forEach(w=>{ h+=`<div><span class="w-q">${esc(w.q)}</span><br>
+      <span class="w-a">✓ ${esc(w.sol)}</span> &nbsp; <span class="w-u">✗ ${esc(w.given)}</span></div>`; });
+    ww.innerHTML=h+'</div>';
+  } else ww.innerHTML='<p class="center" style="color:var(--good)">Alles richtig – perfekt! 🌟</p>';
+  // Falsche Antworten als Text dokumentieren (für Lehrkraft / CSV-Beweis)
+  const wrongText = wrong.length
+    ? wrong.map(w=>`${w.de} → richtig: ${w.sol} | eingegeben: ${w.given}`).join("\n")
+    : "";
+  // Ergebnis speichern
+  el('saveStatus').textContent='Speichere Ergebnis …';
+  try{ await saveResult(playerName, score, total, wrongText); el('saveStatus').textContent = ONLINE?'✅ Ergebnis gespeichert.':'💾 Lokal gespeichert (Online-Speicher noch nicht eingerichtet).'; }
+  catch(e){ el('saveStatus').textContent='⚠️ Konnte nicht gespeichert werden: '+e.message; }
+}
+el('retryBtn').onclick=()=>el('startBtn').click();
+el('homeBtn').onclick=goHome;
+function goHome(){ ['quiz','result','teacher'].forEach(i=>el(i).classList.add('hidden')); el('start').classList.remove('hidden'); }
+
+/* ====== SPEICHERN / LADEN (Supabase + Fallback) ====== */
+async function saveResult(name, points, total, wrongText){
+  const percent=Math.round(points/total*100);
+  if(!ONLINE){
+    const list=JSON.parse(localStorage.getItem("vokabel_results")||"[]");
+    list.push({ name, points, total, percent, wrong:wrongText||"", played_at:new Date().toISOString() });
+    localStorage.setItem("vokabel_results",JSON.stringify(list)); return;
+  }
+  const post = body => fetch(SUPABASE_URL+"/rest/v1/"+TABLE,{
+    method:"POST",
+    headers:{ "apikey":SUPABASE_KEY,"Authorization":"Bearer "+SUPABASE_KEY,
+              "Content-Type":"application/json","Prefer":"return=minimal" },
+    body: JSON.stringify(body)
+  });
+  // mit Fehlerliste; falls Spalte "wrong" (noch) nicht existiert, ohne sie erneut versuchen
+  let r = await post({name, points, total, percent, wrong:wrongText||""});
+  if(!r.ok){ r = await post({name, points, total, percent}); }
+  if(!r.ok) throw new Error("HTTP "+r.status);
+}
+async function loadResults(){
+  if(!ONLINE){
+    return JSON.parse(localStorage.getItem("vokabel_results")||"[]")
+      .map(r=>({name:r.name,points:r.points,total:r.total,percent:r.percent,wrong:r.wrong||"",created_at:r.played_at}));
+  }
+  // zuerst mit Spalte "wrong"; falls sie fehlt, ohne sie laden
+  let r=await fetch(SUPABASE_URL+"/rest/v1/"+TABLE+"?select=name,points,total,percent,wrong,created_at&order=created_at.desc&limit=2000",
+    { headers:{ "apikey":SUPABASE_KEY,"Authorization":"Bearer "+SUPABASE_KEY }});
+  if(!r.ok){
+    r=await fetch(SUPABASE_URL+"/rest/v1/"+TABLE+"?select=name,points,total,percent,created_at&order=created_at.desc&limit=2000",
+      { headers:{ "apikey":SUPABASE_KEY,"Authorization":"Bearer "+SUPABASE_KEY }});
+  }
+  if(!r.ok) throw new Error("HTTP "+r.status);
+  return await r.json();
+}
+
+/* ====== LEHRER-ANSICHT ====== */
+el('teacherLink').onclick=()=>{ el('start').classList.add('hidden'); el('teacher').classList.remove('hidden');
+  el('teacherData').classList.add('hidden'); el('teacherLogin').classList.remove('hidden'); el('teacherPw').value=''; el('pwErr').textContent=''; el('teacherPw').focus(); };
+el('teacherBack').onclick=goHome;
+el('teacherBack2').onclick=goHome;
+el('teacherPw').addEventListener('keydown',e=>{ if(e.key==='Enter') el('teacherEnter').click(); });
+el('teacherEnter').onclick=()=>{
+  if(el('teacherPw').value!==TEACHER_PASSWORD){ el('pwErr').textContent='Falsches Passwort.'; return; }
+  el('teacherLogin').classList.add('hidden'); el('teacherData').classList.remove('hidden');
+  loadAndRender();
+};
+el('refreshBtn').onclick=loadAndRender;
+
+let resultsCache=[], sortKey='created_at', sortDir=-1;
+async function loadAndRender(){
+  el('resCount').textContent='Lädt …';
+  try{ resultsCache=await loadResults(); renderTable(); }
+  catch(e){ el('resCount').textContent='⚠️ Fehler beim Laden: '+e.message; }
+}
+function renderTable(){
+  const data=[...resultsCache].sort((a,b)=>{
+    let x=a[sortKey], y=b[sortKey];
+    if(sortKey==='name'){ x=(x||'').toLowerCase(); y=(y||'').toLowerCase(); return x<y?-1*sortDir:x>y?1*sortDir:0; }
+    return ((x||0)-(y||0))*sortDir;
+  });
+  el('resCount').textContent=`${resultsCache.length} Ergebnis(se)`;
+  const cols=[['name','Name'],['points','Punkte'],['total','von'],['percent','%'],['created_at','Datum / Uhrzeit'],['wrong','Falsche Antworten']];
+  const thead=el('resTable').querySelector('thead');
+  thead.innerHTML='<tr>'+cols.map(c=>`<th data-k="${c[0]}">${c[1]}</th>`).join('')+'</tr>';
+  thead.querySelectorAll('th').forEach(th=>th.onclick=()=>{ const k=th.dataset.k; if(sortKey===k) sortDir*=-1; else {sortKey=k; sortDir=(k==='name'?1:-1);} renderTable(); });
+  const tb=el('resTable').querySelector('tbody');
+  tb.innerHTML = data.map(r=>{
+    const d=r.created_at?new Date(r.created_at):null;
+    const ds=d?d.toLocaleString('de-AT',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}):'';
+    const wrongHtml = r.wrong ? esc(r.wrong).replace(/\n/g,'<br>') : '<span style="color:var(--good)">–</span>';
+    return `<tr><td>${esc(r.name)}</td><td class="num">${r.points}</td><td class="num">${r.total}</td><td class="num">${r.percent}%</td><td>${ds}</td>`+
+           `<td style="white-space:normal;min-width:240px;font-size:.82rem;color:var(--bad)">${wrongHtml}</td></tr>`;
+  }).join('') || '<tr><td colspan="6" class="center" style="color:var(--muted)">Noch keine Ergebnisse.</td></tr>';
+}
+el('csvBtn').onclick=()=>{
+  const rows=[['Name','Punkte','von','Prozent','Datum/Uhrzeit','Falsche Antworten (richtig / eingegeben)']];
+  [...resultsCache].sort((a,b)=>(a.name||'').localeCompare(b.name||'')).forEach(r=>{
+    const d=r.created_at?new Date(r.created_at).toLocaleString('de-AT'):'';
+    rows.push([r.name, r.points, r.total, r.percent+'%', d, r.wrong||'']);
+  });
+  const csv='﻿'+rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(';')).join('\r\n');
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download='vokabeltest_ergebnisse.csv'; a.click(); URL.revokeObjectURL(a.href);
+};
+</script>
+</body>
+</html>
